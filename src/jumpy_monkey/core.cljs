@@ -1,9 +1,21 @@
-(ns jumpy-monkey.core)
+(ns jumpy-monkey.core
+  (:require [om.core :as om :include-macros true]
+            [sablono.core :as html :refer-macros [html]]))
 
-(defn say [word num]
-  (let [someval (+ 1 num)]
-    (js/console.log word "from main" someval)))
+(def number-of-things-in-list
+  (atom 5))
 
-(say "hello" 2)
-(say "goodbye" 7)
+(defn widget [data]
+  (reify
+    om/IRender
+    (render [this]
+      (html [:div
+             [:p "Hello world!"]
+             [:button {:onClick #(swap! number-of-things-in-list inc)}
+              "Longer!"]
+             [:ul (for [n (range 1 @number-of-things-in-list)]
+                    [:li n])]]))))
 
+(om/root number-of-things-in-list
+         widget
+         (js/document.getElementById "my-app"))
