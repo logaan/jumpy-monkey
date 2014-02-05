@@ -8,8 +8,8 @@
                  [om "0.3.5"]]
   :plugins [[lein-cljsbuild "1.0.2"]]
   :cljsbuild {:builds {:test {:source-paths ["src" "test"]
-                              :compiler {:output-to "resources/js/flappy-bird.js"
-                                         :output-dir "resources/js"
+                              :compiler {:output-to "resources/test/js/flappy-bird.js"
+                                         :output-dir "resources/test/js"
                                          :optimizations :none
-                                         :source-map "resources/js/flappy-bird.js.map"}}}})
+                                         :source-map "resources/test/js/flappy-bird.js.map"}}}})
 
