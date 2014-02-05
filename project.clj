@@ -10,6 +10,6 @@
   :cljsbuild {:builds {:test {:source-paths ["src" "test"]
                               :compiler {:output-to "resources/js/flappy-bird.js"
                                          :output-dir "resources/js"
-                                         :optimizations :advanced
+                                         :optimizations :none
                                          :source-map "resources/js/flappy-bird.js.map"}}}})
 
