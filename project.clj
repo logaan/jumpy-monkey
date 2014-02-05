@@ -12,6 +12,7 @@
                               :compiler {:output-to "resources/prod/js/main.js"
                                          :output-dir "resources/prod/js"
                                          :optimizations :advanced
+                                         :pretty-print false
                                          ; :preamble ["resources/react/react.min.js"]
                                          :externs ["resources/react/externs/react.js"]}}
                        :test {:source-paths ["src" "test"]

@@ -2,7 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [sablono.core :as html :refer-macros [html]]))
 
-(def number-of-things-in-list
+(def num-things
   (atom 5))
 
 (defn widget [data]
@@ -11,11 +11,9 @@
     (render [this]
       (html [:div
              [:p "Hello world!"]
-             [:button {:onClick #(swap! number-of-things-in-list inc)}
+             [:button {:onClick #(swap! num-things inc)}
               "Longer!"]
-             [:ul (for [n (range 1 @number-of-things-in-list)]
+             [:ul (for [n (range 1 @num-things)]
                     [:li n])]]))))
 
-(om/root number-of-things-in-list
-         widget
-         (js/document.getElementById "my-app"))
+(om/root num-things widget (js/document.getElementById "my-app"))
