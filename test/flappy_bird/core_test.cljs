@@ -1,7 +1,4 @@
 (ns flappy-bird.core-test
-  (:require [clojure.test :refer :all]
-            [flappy-bird.core :refer :all]))
+  (:require [flappy-bird.core :refer []]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(js/console.log "hello from tests")
