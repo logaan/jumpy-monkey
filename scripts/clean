@@ -1,0 +1,2 @@
+rm -rf resources/prod/js/*
+rm -rf resources/test/js/*

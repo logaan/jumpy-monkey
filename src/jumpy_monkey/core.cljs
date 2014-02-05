@@ -1,4 +1,4 @@
-(ns flappy-bird.core)
+(ns jumpy-monkey.core)
 
 (defn say [word num]
   (let [someval (+ 1 num)]
