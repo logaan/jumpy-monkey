@@ -7,7 +7,13 @@
                  [org.clojure/clojurescript "0.0-2156"]
                  [om "0.3.5"]]
   :plugins [[lein-cljsbuild "1.0.2"]]
-  :cljsbuild {:builds {:test {:source-paths ["src" "test"]
+  :cljsbuild {:builds {:prod {:source-paths ["src"]
+                              :compiler {:output-to "resources/prod/js/flappy-bird.js"
+                                         :output-dir "resources/prod/js"
+                                         :optimizations :advanced
+                                         ; :preamble ["resources/react/react.min.js"]
+                                         :externs ["resources/react/externs/react.js"]}}
+                       :test {:source-paths ["src" "test"]
                               :compiler {:output-to "resources/test/js/flappy-bird.js"
                                          :output-dir "resources/test/js"
                                          :optimizations :none
