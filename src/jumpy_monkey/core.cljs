@@ -10,42 +10,45 @@
 
 (def game-state
   (atom {:monkey {:height 50 :velocity 0}
-         :pipes  [[50 20] [110 40] [170 60]]
+         :pipes  [[50 200] [250 300] [450 400]]
          :last-update (js/Date.)
 
-         :screen {:width 200 :height 200}
-         :pipe   {:width 20 :gap 20}
-         :gravity 0.005
-         :flapv   -5}))
+         :screen      {:width 480 :height 720}
+         :monkey-config {:width 40 :height 30}
+         :pipe-config {:width 100 :gap 120 :height 720}
+         :gravity     0.005
+         :flapv       -5}))
 
-(defn pipe-to-top [[x y]]
+(defn pipe-to-top [{:keys [width gap]} [x y]]
   [:rect {:x x
           :y 0 
-          :width 20 
-          :height (- y 10) 
+          :width width
+          :height (- y (/ gap 2)) 
           :fill "green"}])
 
-(defn pipe-to-bottom [[x y]]
+(defn pipe-to-bottom [{:keys [height width gap]} [x y]]
   [:rect {:x x
-          :y (+ y 10)
-          :width 20
-          :height (- 200 y 10)
+          :y (+ y (/ gap 2))
+          :width width
+          :height (- height y (/ gap 2))
           :fill "green"}])
 
-(defn render-monkey [{:keys [height]}]
+(defn render-monkey [{:keys [width height]} {y :height}]
   [:rect {:x 20
-          :y height
-          :width 15
-          :height 10
+          :y y
+          :width width
+          :height height
           :fill "brown"}])
 
-(defn render-pipes [pipes]
+(defn render-pipes [pipe-config pipes]
   (->> pipes
        (take 3)
-       (mapcat (juxt pipe-to-top pipe-to-bottom))
+       (mapcat (juxt (partial pipe-to-top pipe-config)
+                     (partial pipe-to-bottom pipe-config)))
        (into '())))
 
-(defn c-game [{:keys [monkey pipes screen] :as game}]
+(defn c-game
+  [{:keys [monkey pipes screen monkey-config pipe-config] :as game}]
   (reify om/IRender
     (render [this]
       (html
@@ -53,8 +56,8 @@
          [:svg {:width (:width screen)
                 :height (:height screen)
                 :style {:border "1px solid black"}}
-          (render-monkey monkey)
-          (render-pipes pipes)]]))))
+          (render-monkey monkey-config monkey)
+          (render-pipes pipe-config pipes)]]))))
 
 (om/root game-state c-game (js/document.getElementById "my-app"))
 
