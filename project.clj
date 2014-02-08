@@ -19,5 +19,6 @@
                               :compiler {:output-to "resources/test/js/main.js"
                                          :output-dir "resources/test/js"
                                          :optimizations :none
-                                         :source-map "resources/test/js/main.js.map"}}}})
+                                         ; :source-map "resources/test/js/main.js.map"
+                                         }}}})
 
