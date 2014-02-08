@@ -5,18 +5,18 @@
 (enable-console-print!)
 
 (defn log [v]
-  (js/console.log (str v))
+  (js/console.log v)
   v)
-
-(def config
-  {:game {:width 200
-          :height 200}
-   :pipe {:width 20
-          :gap 20}})
 
 (def game-state
   (atom {:monkey {:height 50 :velocity 0}
-         :pipes [[50 20] [110 40] [170 60]]}))
+         :pipes  [[50 20] [110 40] [170 60]]
+         :last-update (js/Date.)
+
+         :screen {:width 200 :height 200}
+         :pipe   {:width 20 :gap 20}
+         :gravity 0.005
+         :flapv   -5}))
 
 (defn pipe-to-top [[x y]]
   [:rect {:x x
@@ -45,23 +45,39 @@
        (mapcat (juxt pipe-to-top pipe-to-bottom))
        (into '())))
 
-(defn render-debug [game]
-  [:p [:strong "config"]
-   [:pre (str config)]  
-   [:strong "game"]
-   [:pre (str (into {} game))]])
-
-(defn c-game [{:keys [monkey pipes] :as game}]
+(defn c-game [{:keys [monkey pipes screen] :as game}]
   (reify om/IRender
     (render [this]
-      (let [width  (:width  (:game config))
-            height (:height (:game config))]
-        (html
+      (html
         [:div
-         [:svg {:width width :height height :style {:border "1px solid black"}}
-             (render-monkey monkey)
-             (render-pipes pipes)]
-         (render-debug game)])))))
+         [:svg {:width (:width screen)
+                :height (:height screen)
+                :style {:border "1px solid black"}}
+          (render-monkey monkey)
+          (render-pipes pipes)]]))))
 
 (om/root game-state c-game (js/document.getElementById "my-app"))
 
+(defn tick [{{:keys [height velocity]} :monkey
+             :keys [last-update gravity] :as game}]
+  (let [new-update   (js/Date.)
+        time-diff    (- new-update last-update)
+        grav-effect  (/ (* gravity 1000) time-diff)
+        new-velocity (+ velocity grav-effect)
+        new-height   (+ height velocity)
+        new-monkey   {:velocity new-velocity :height new-height}]
+    (assoc game :monkey new-monkey
+                :last-update new-update)))
+
+(js/setInterval
+  #(swap! game-state tick)
+  16)
+
+(let [my-app (js/document.getElementById "my-app")]
+  (aset my-app "tabIndex" 0)
+  (.focus my-app)
+  (aset my-app "onkeypress"
+        (fn [event]
+          (if (= 119 (aget event "charCode"))
+           (swap! game-state assoc-in [:monkey :velocity]
+                  (:flapv @game-state))))))
