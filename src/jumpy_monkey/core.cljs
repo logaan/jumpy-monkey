@@ -8,28 +8,60 @@
   (js/console.log (str v))
   v)
 
+(def config
+  {:game {:width 200
+          :height 200}
+   :pipe {:width 20
+          :gap 20}})
+
 (def game-state
   (atom {:monkey {:height 50 :velocity 0}
-         :pipes [[0 20] [1 40] [2 60] [3 80] [4 100] [5 120] [6 140] [7 160]]}))
+         :pipes [[50 20] [110 40] [170 60]]}))
 
 (defn pipe-to-top [[x y]]
-  (log [:rect {:x (+ (* x 60) 50)
-               :y 0
-               :width 20
-               :height (- y 10)
-               :fill "green"}]))
+  [:rect {:x x
+          :y 0 
+          :width 20 
+          :height (- y 10) 
+          :fill "green"}])
+
+(defn pipe-to-bottom [[x y]]
+  [:rect {:x x
+          :y (+ y 10)
+          :width 20
+          :height (- 200 y 10)
+          :fill "green"}])
 
 (defn render-monkey [{:keys [height]}]
-  [:rect {:x 20 :y height :width 15 :height 10 :fill "brown"}])
+  [:rect {:x 20
+          :y height
+          :width 15
+          :height 10
+          :fill "brown"}])
 
 (defn render-pipes [pipes]
-  (into '() (map pipe-to-top (take 3 pipes))))
+  (->> pipes
+       (take 3)
+       (mapcat (juxt pipe-to-top pipe-to-bottom))
+       (into '())))
 
-(defn c-game [{:keys [monkey pipes]}]
+(defn render-debug [game]
+  [:p [:strong "config"]
+   [:pre (str config)]  
+   [:strong "game"]
+   [:pre (str (into {} game))]])
+
+(defn c-game [{:keys [monkey pipes] :as game}]
   (reify om/IRender
     (render [this]
-      (html [:svg {:width 200 :height 200 :style {:border "1px solid black"}}
+      (let [width  (:width  (:game config))
+            height (:height (:game config))]
+        (html
+        [:div
+         [:svg {:width width :height height :style {:border "1px solid black"}}
              (render-monkey monkey)
-             (render-pipes pipes)]))))
+             (render-pipes pipes)]
+         (render-debug game)])))))
 
 (om/root game-state c-game (js/document.getElementById "my-app"))
+
